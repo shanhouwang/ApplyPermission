@@ -1,0 +1,10 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.devin.apply.permission">
+
+    <application>
+        <activity
+            android:name=".activity.ApplyActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/theme_transparent" />
+    </application>
+</manifest>
