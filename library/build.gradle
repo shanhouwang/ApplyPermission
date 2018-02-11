@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 26
@@ -19,7 +20,23 @@ android {
 
 }
 
+tasks.withType(Javadoc) {
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.addStringOption('encoding', 'UTF-8')
+    options.addStringOption('charSet', 'UTF-8')
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:26.1.0'
+}
+
+// 添加
+publish {
+    userOrg = 'shanhouwang'
+    groupId = 'com.devin'
+    artifactId = 'apply-permission'
+    publishVersion = '1.0.1-beta-3'
+    desc = 'a library for android dynamic apply permission'
+    website = 'https://github.com/shanhouwang/ApplyPermission'
 }
