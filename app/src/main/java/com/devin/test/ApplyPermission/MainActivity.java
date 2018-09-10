@@ -17,7 +17,6 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.tv_apply).setOnClickListener((view) -> {
             ApplyPermission.build()
                     .context(MainActivity.this)
-                    .must(true)
                     .tip("王八蛋权限")
                     .permission(Manifest.permission.ACCESS_FINE_LOCATION)
                     .setOnGrantedCallBack(() -> Toast.makeText(MainActivity.this, "授权了", Toast.LENGTH_SHORT).show())

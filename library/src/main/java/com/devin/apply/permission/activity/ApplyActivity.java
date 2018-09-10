@@ -59,6 +59,8 @@ public class ApplyActivity extends AppCompatActivity {
         }
         sp = new SPUtils(this, NAME);
         permission = permissions.get(mRequestCode);
+        if (permission.onGrantedCallBack == null)
+            throw new RuntimeException("OnGrantedCallBack 不能为 Null");
         mActivity = this;
         checkPermission();
     }
@@ -116,7 +118,7 @@ public class ApplyActivity extends AppCompatActivity {
                 if (permission.must) {
                     new AlertDialog.Builder(mActivity)
                             .setTitle("获取权限")
-                            .setMessage("我们需要" + (TextUtils.isEmpty(permission.tip) ? PermissionTips.get(permission.name) : permission.tip))
+                            .setMessage(TextUtils.isEmpty(permission.tip) ? "我们需要" + PermissionTips.get(permission.name) : permission.tip)
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -129,7 +131,7 @@ public class ApplyActivity extends AppCompatActivity {
                 } else {
                     new AlertDialog.Builder(mActivity)
                             .setTitle("获取权限")
-                            .setMessage("我们需要" + (TextUtils.isEmpty(permission.tip) ? PermissionTips.get(permission.name) : permission.tip))
+                            .setMessage(TextUtils.isEmpty(permission.tip) ? "我们需要" + PermissionTips.get(permission.name) : permission.tip)
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -139,7 +141,7 @@ public class ApplyActivity extends AppCompatActivity {
                             .setNegativeButton("取消", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    permission.onDeniedCallBack.onDenied();
+                                    if(null != permission.onDeniedCallBack) permission.onDeniedCallBack.onDenied();
                                     mActivity.finish();
                                 }
                             })
@@ -178,7 +180,7 @@ public class ApplyActivity extends AppCompatActivity {
                     .setNegativeButton("取消", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            permission.onDeniedCallBack.onDenied();
+                            if(null != permission.onDeniedCallBack) permission.onDeniedCallBack.onDenied();
                             mActivity.finish();
                         }
                     })
@@ -238,7 +240,7 @@ public class ApplyActivity extends AppCompatActivity {
                                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        permission.onDeniedCallBack.onDenied();
+                                        if(null != permission.onDeniedCallBack) permission.onDeniedCallBack.onDenied();
                                         mActivity.finish();
                                     }
                                 })
@@ -249,7 +251,7 @@ public class ApplyActivity extends AppCompatActivity {
                 } else {
                     new AlertDialog.Builder(mActivity)
                             .setTitle("获取权限")
-                            .setMessage("我们需要" + (TextUtils.isEmpty(permission.tip) ? PermissionTips.get(permission.name) : permission.tip))
+                            .setMessage(TextUtils.isEmpty(permission.tip) ? "我们需要" + PermissionTips.get(permission.name) : permission.tip)
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -259,7 +261,7 @@ public class ApplyActivity extends AppCompatActivity {
                             .setNegativeButton("取消", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    permission.onDeniedCallBack.onDenied();
+                                    if (null != permission.onDeniedCallBack) permission.onDeniedCallBack.onDenied();
                                     finish();
                                 }
                             })
