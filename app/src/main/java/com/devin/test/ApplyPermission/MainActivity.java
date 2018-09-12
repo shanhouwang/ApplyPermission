@@ -14,15 +14,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        findViewById(R.id.tv_apply).setOnClickListener((view) -> {
-            ApplyPermission.build()
-                    .context(MainActivity.this)
-                    .must(true)
-                    .tip("王八蛋权限")
-                    .permission(Manifest.permission.ACCESS_FINE_LOCATION)
-                    .setOnGrantedCallBack(() -> Toast.makeText(MainActivity.this, "授权了", Toast.LENGTH_SHORT).show())
-                    .setOnDeniedCallBack(() -> Toast.makeText(MainActivity.this, "没有授权", Toast.LENGTH_SHORT).show())
-                    .apply();
-        });
+        findViewById(R.id.tv_apply).setOnClickListener((view) ->
+                ApplyPermission.build()
+                        .context(MainActivity.this)
+                        .must(false)
+                        .tip("王八蛋权限")
+                        .permission(Manifest.permission.CAMERA)
+                        .setOnGrantedCallBack(() -> Toast.makeText(MainActivity.this, "授权了", Toast.LENGTH_SHORT).show())
+                        .setOnDeniedCallBack(() -> Toast.makeText(MainActivity.this, "没有授权", Toast.LENGTH_SHORT).show())
+                        .apply()
+        );
     }
 }
