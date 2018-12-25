@@ -36,7 +36,7 @@ publish {
     userOrg = 'shanhouwang'
     groupId = 'com.devin'
     artifactId = 'apply-permission'
-    publishVersion = '1.0.3-beta'
+    publishVersion = '1.0.4'
     desc = 'a library for android dynamic apply permission'
     website = 'https://github.com/shanhouwang/ApplyPermission'
 }

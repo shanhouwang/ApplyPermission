@@ -1,11 +1,15 @@
 package com.devin.apply.permission.utils;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Binder;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 
 import java.util.ArrayList;
@@ -49,10 +53,9 @@ public class PermissionUtils {
      * 打开权限设置界面
      */
     public static void openPermissionSettings(Activity activity) {
-        Intent intent = new Intent();
-        intent.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
-        intent.setData(uri);
+        Uri uri = Uri.parse("package:" + activity.getPackageName());
+        Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
     }
 
@@ -79,6 +82,5 @@ public class PermissionUtils {
         }
         return deniedPermissions;
     }
-
 
 }

@@ -59,8 +59,6 @@ public class ApplyActivity extends AppCompatActivity {
         }
         sp = new SPUtils(this, NAME);
         permission = permissions.get(mRequestCode);
-        if (permission.onGrantedCallBack == null)
-            throw new RuntimeException("OnGrantedCallBack 不能为 Null");
         mActivity = this;
         checkPermission();
     }
@@ -75,7 +73,7 @@ public class ApplyActivity extends AppCompatActivity {
             sp.putBoolean(CLICKED, false);
             // 如果已经授权
             if (PermissionUtils.checkPermissions(mActivity, permission.name)) {
-                permission.onGrantedCallBack.onGranted();
+                if (permission.onGrantedCallBack != null) permission.onGrantedCallBack.onGranted();
                 this.finish();
             } else {
                 if (permission.must) {
@@ -99,7 +97,7 @@ public class ApplyActivity extends AppCompatActivity {
                             .create()
                             .show();
                 } else {
-                    permission.onDeniedCallBack.onDenied();
+                    if (permission.onDeniedCallBack != null) permission.onDeniedCallBack.onDenied();
                     this.finish();
                 }
             }
@@ -109,7 +107,7 @@ public class ApplyActivity extends AppCompatActivity {
     private void checkPermission() {
         // 如果已经授权
         if (PermissionUtils.checkPermissions(mActivity, permission.name)) {
-            permission.onGrantedCallBack.onGranted();
+            if (permission.onGrantedCallBack != null) permission.onGrantedCallBack.onGranted();
             finish();
             return;
         }
@@ -202,7 +200,7 @@ public class ApplyActivity extends AppCompatActivity {
 
         if (requestCode == mRequestCode) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                permission.onGrantedCallBack.onGranted();
+                if (permission.onGrantedCallBack != null) permission.onGrantedCallBack.onGranted();
                 mActivity.finish();
             } else if (permissions != null && permissions.length > 0) {
                 boolean showRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0]);
