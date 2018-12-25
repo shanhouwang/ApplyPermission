@@ -255,7 +255,8 @@ public class ApplyActivity extends AppCompatActivity {
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    ActivityCompat.requestPermissions(mActivity, new String[]{permission.name}, mRequestCode);
+                                    PermissionUtils.openPermissionSettings(mActivity);
+                                    sp.putBoolean(CLICKED, true);
                                 }
                             })
                             .setNegativeButton("取消", new DialogInterface.OnClickListener() {

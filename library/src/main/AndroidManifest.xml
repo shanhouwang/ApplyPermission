@@ -4,6 +4,7 @@
     <application>
         <activity
             android:name=".activity.ApplyActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/theme_transparent" />
     </application>
