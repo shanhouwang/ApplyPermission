@@ -18,9 +18,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.tvApply).setOnClickListener(view -> {
             ApplyPermission.build()
                     .context(MainActivity.this)
-                    .permission(Manifest.permission.ACCESS_FINE_LOCATION, null, false)
-                    .permission(Manifest.permission.READ_PHONE_STATE, null, false)
-                    .permission(Manifest.permission.CAMERA, null, false)
+                    .permission(Manifest.permission.ACCESS_FINE_LOCATION)
                     .setOnGrantedCallBack(() -> Toast.makeText(MainActivity.this, "授权了", Toast.LENGTH_SHORT).show())
                     .setOnDeniedCallBack(() -> Toast.makeText(MainActivity.this, "没有授权", Toast.LENGTH_SHORT).show())
                     .apply();

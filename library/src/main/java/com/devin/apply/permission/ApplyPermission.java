@@ -14,7 +14,9 @@ import com.devin.apply.permission.utils.PermissionUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Devin on 2017/7/4.
@@ -27,6 +29,7 @@ public class ApplyPermission {
     public static final String KEY_PERMISSION_REQUEST_CODE = "key_permission_request_code";
     public static int REQUEST_PERMISSION_CODE = 1;
     public static Handler mHandler = new Handler(Looper.getMainLooper());
+    public static final int BEGIN_INDEX = 0;
 
     /**
      * 成功回调
@@ -45,9 +48,7 @@ public class ApplyPermission {
 
     private List<PermissionModel> permissions = new ArrayList<>();
 
-
-    // 全部都授权了才会回调
-    private boolean permissionGranted = true;
+    private Map<Integer, Boolean> permissionsMap = new HashMap<>();
 
     private int count;
 
@@ -90,17 +91,37 @@ public class ApplyPermission {
     }
 
     private void add(String permissionName, String tip, boolean must) {
-        PermissionModel p = new PermissionModel();
+        final PermissionModel p = new PermissionModel();
         p.onGrantedCallBack = new OnGrantedCallBack() {
             @Override
             public void onGranted() {
-                permissionGranted = true;
+                permissionsMap.put(p.index, true);
+                boolean granted = true;
+                for (Map.Entry<Integer, Boolean> entry : permissionsMap.entrySet()) {
+                    if (!entry.getValue()) {
+                        granted = false;
+                    }
+                }
+                if (p.index == BEGIN_INDEX) {
+                    if (granted) {
+                        if (null != mOnGrantedCallBack) {
+                            mOnGrantedCallBack.onGranted();
+                        }
+                    } else {
+                        if (null != mOnDeniedCallBack) {
+                            mOnDeniedCallBack.onDenied();
+                        }
+                    }
+                }
             }
         };
         p.onDeniedCallBack = new OnDeniedCallBack() {
             @Override
             public void onDenied() {
-                permissionGranted = false;
+                permissionsMap.put(p.index, false);
+                if (p.index == BEGIN_INDEX) {
+                    mOnDeniedCallBack.onDenied();
+                }
             }
         };
         p.name = permissionName;
@@ -129,13 +150,15 @@ public class ApplyPermission {
             APP_NAME = getAppName(context);
         }
         Collections.reverse(permissions);
+        boolean granted = true;
         for (int i = 0; i < permissions.size(); i++) {
             if (!PermissionUtils.checkPermissions(context, permissions.get(i).name)) {
-                permissionGranted = false;
+                granted = false;
             }
-            permissions.get(i).delay = i * 50;
+            permissions.get(i).delay = i * 10;
+            permissions.get(i).index = i;
         }
-        if (permissionGranted) {
+        if (granted) {
             mOnGrantedCallBack.onGranted();
             return;
         }

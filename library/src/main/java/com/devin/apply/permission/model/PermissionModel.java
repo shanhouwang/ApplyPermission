@@ -33,4 +33,6 @@ public class PermissionModel {
     public int requestCode;
 
     public int delay;
+
+    public int index;
 }
