@@ -4,11 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 
 import com.devin.apply.permission.activity.ApplyActivity;
 import com.devin.apply.permission.model.PermissionModel;
 import com.devin.apply.permission.utils.PermissionUtils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by Devin on 2017/7/4.
@@ -20,6 +26,7 @@ public class ApplyPermission {
 
     public static final String KEY_PERMISSION_REQUEST_CODE = "key_permission_request_code";
     public static int REQUEST_PERMISSION_CODE = 1;
+    public static Handler mHandler = new Handler(Looper.getMainLooper());
 
     /**
      * 成功回调
@@ -36,17 +43,13 @@ public class ApplyPermission {
      */
     private Context context;
 
-    /**
-     * 权限名称
-     */
-    private String permission;
+    private List<PermissionModel> permissions = new ArrayList<>();
 
-    /**
-     * 不授权弹窗不可以取消
-     */
-    private boolean must;
 
-    private String tip;
+    // 全部都授权了才会回调
+    private boolean permissionGranted = true;
+
+    private int count;
 
     private ApplyPermission() {
     }
@@ -66,19 +69,45 @@ public class ApplyPermission {
         return this;
     }
 
-    public synchronized ApplyPermission permission(String permission) {
-        this.permission = permission;
+    /**
+     * @param permissionName 权限名称
+     * @return
+     */
+    public synchronized ApplyPermission permission(String permissionName) {
+        this.add(permissionName, null, false);
         return this;
     }
 
-    public synchronized ApplyPermission tip(String tip) {
-        this.tip = tip;
+    /**
+     * @param permissionName 权限名称
+     * @param tip            提示文案
+     * @param must           不授权弹窗不可以取消
+     * @return
+     */
+    public synchronized ApplyPermission permission(String permissionName, String tip, boolean must) {
+        this.add(permissionName, tip, must);
         return this;
     }
 
-    public synchronized ApplyPermission must(boolean must) {
-        this.must = must;
-        return this;
+    private void add(String permissionName, String tip, boolean must) {
+        PermissionModel p = new PermissionModel();
+        p.onGrantedCallBack = new OnGrantedCallBack() {
+            @Override
+            public void onGranted() {
+                permissionGranted = true;
+            }
+        };
+        p.onDeniedCallBack = new OnDeniedCallBack() {
+            @Override
+            public void onDenied() {
+                permissionGranted = false;
+            }
+        };
+        p.name = permissionName;
+        p.tip = tip;
+        p.must = must;
+        p.requestCode = createRequestCode();
+        this.permissions.add(p);
     }
 
     public synchronized ApplyPermission setOnGrantedCallBack(OnGrantedCallBack callBack) {
@@ -99,25 +128,29 @@ public class ApplyPermission {
         if (TextUtils.isEmpty(APP_NAME)) {
             APP_NAME = getAppName(context);
         }
-
-        if (PermissionUtils.checkPermissions(context, permission)) {
+        Collections.reverse(permissions);
+        for (int i = 0; i < permissions.size(); i++) {
+            if (!PermissionUtils.checkPermissions(context, permissions.get(i).name)) {
+                permissionGranted = false;
+            }
+            permissions.get(i).delay = i * 50;
+        }
+        if (permissionGranted) {
             mOnGrantedCallBack.onGranted();
             return;
         }
-
-        PermissionModel p = new PermissionModel();
-        p.onGrantedCallBack = mOnGrantedCallBack;
-        p.onDeniedCallBack = mOnDeniedCallBack;
-        p.name = permission;
-        p.tip = tip;
-        p.must = must;
-        p.requestCode = createRequestCode();
-        ApplyActivity.permissions.put(p.requestCode, p);
-
-        // 跳转透明申请权限页面
-        Intent i = new Intent(context, ApplyActivity.class);
-        i.putExtra(KEY_PERMISSION_REQUEST_CODE, p.requestCode);
-        context.startActivity(i);
+        for (final PermissionModel permission : permissions) {
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ApplyActivity.permissions.put(permission.requestCode, permission);
+                    // 跳转透明申请权限页面
+                    Intent i = new Intent(context, ApplyActivity.class);
+                    i.putExtra(KEY_PERMISSION_REQUEST_CODE, permission.requestCode);
+                    context.startActivity(i);
+                }
+            }, permission.delay);
+        }
     }
 
     private static final int RANGE = 65535;

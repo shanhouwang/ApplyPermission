@@ -4,7 +4,6 @@
     <application>
         <activity
             android:name=".activity.ApplyActivity"
-            android:launchMode="singleTask"
             android:theme="@style/theme_transparent" />
     </application>
 </manifest>

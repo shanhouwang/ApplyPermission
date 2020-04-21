@@ -25,10 +25,12 @@ public class PermissionModel {
 
     public String tip;
 
-    public boolean must;
+    public boolean must = false;
 
     /**
      * 0 < requestCode < 65536
      */
     public int requestCode;
+
+    public int delay;
 }
