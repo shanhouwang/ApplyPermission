@@ -27,9 +27,9 @@ import java.util.Map;
 public class ApplyPermission {
 
     public static final String KEY_PERMISSION_REQUEST_CODE = "key_permission_request_code";
-    public static int REQUEST_PERMISSION_CODE = 1;
-    public static Handler mHandler = new Handler(Looper.getMainLooper());
-    public static final int BEGIN_INDEX = 0;
+    private static int REQUEST_PERMISSION_CODE = 1;
+    private static Handler mHandler = new Handler(Looper.getMainLooper());
+    private static final int BEGIN_INDEX = 0;
 
     /**
      * 成功回调
@@ -50,10 +50,7 @@ public class ApplyPermission {
 
     private Map<Integer, Boolean> permissionsMap = new HashMap<>();
 
-    private int count;
-
-    private ApplyPermission() {
-    }
+    private ApplyPermission() {}
 
     public static ApplyPermission build() {
         ApplyPermission p = new ApplyPermission();
@@ -188,12 +185,10 @@ public class ApplyPermission {
     }
 
     public interface OnGrantedCallBack {
-
         void onGranted(); // 授权
     }
 
     public interface OnDeniedCallBack {
-
         void onDenied(); // 拒绝
     }
 
@@ -203,7 +198,7 @@ public class ApplyPermission {
      * @param context
      * @return
      */
-    public static String getAppName(Context context) {
+    private static String getAppName(Context context) {
         PackageManager pm = context.getPackageManager();
         try {
             PackageInfo info = pm.getPackageInfo(context.getPackageName(), 0);
