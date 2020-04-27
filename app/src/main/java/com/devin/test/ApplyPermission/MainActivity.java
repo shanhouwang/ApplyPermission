@@ -2,13 +2,13 @@ package com.devin.test.ApplyPermission;
 
 import android.Manifest;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
 import com.devin.apply.permission.ApplyPermission;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,9 +17,11 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.tvApply).setOnClickListener(view -> {
             ApplyPermission.build()
-                    .context(MainActivity.this)
+                    .context(this)
                     .permission(Manifest.permission.ACCESS_FINE_LOCATION)
-                    .setOnGrantedCallBack(() -> Toast.makeText(MainActivity.this, "授权了", Toast.LENGTH_SHORT).show())
+                    .setOnGrantedCallBack(() -> {
+                        startActivity(new Intent(MainActivity.this, SecondActivity.class));
+                    })
                     .setOnDeniedCallBack(() -> Toast.makeText(MainActivity.this, "没有授权", Toast.LENGTH_SHORT).show())
                     .apply();
         });

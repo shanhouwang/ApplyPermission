@@ -1,11 +1,14 @@
 package com.devin.apply.permission;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
 import com.devin.apply.permission.activity.ApplyActivity;
@@ -50,7 +53,8 @@ public class ApplyPermission {
 
     private Map<Integer, Boolean> permissionsMap = new HashMap<>();
 
-    private ApplyPermission() {}
+    private ApplyPermission() {
+    }
 
     public static ApplyPermission build() {
         ApplyPermission p = new ApplyPermission();
@@ -167,7 +171,13 @@ public class ApplyPermission {
                     // 跳转透明申请权限页面
                     Intent i = new Intent(context, ApplyActivity.class);
                     i.putExtra(KEY_PERMISSION_REQUEST_CODE, permission.requestCode);
-                    context.startActivity(i);
+                    if (context instanceof Activity) {
+                        ActivityCompat.startActivity(context, i, null);
+                    } else {
+                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        i.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                        ContextCompat.startActivities(context, new Intent[]{i}, null);
+                    }
                 }
             }, permission.delay);
         }
